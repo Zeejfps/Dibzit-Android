@@ -1,7 +1,9 @@
 <resources>
 
     <string name="app_name">Dibzit</string>
-    <string name="title_activty_timeslots">Pick a Time Slot</string>
+
+    <string name="title_activity_timeslots">Pick a Time Slot</string>
+    <string name="title_activity_rooms">Pick a Room</string>
 
     <string name="action_search">Search</string>
 

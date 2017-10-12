@@ -1,6 +1,7 @@
 package com.ttuicube.dibzitapp.modules.timeslots;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.ttuicube.dibzitapp.R;
 import com.ttuicube.dibzitapp.model.DibsRoom;
 import com.ttuicube.dibzitapp.model.TimeSlot;
+import com.ttuicube.dibzitapp.modules.rooms.RoomsActivity;
 
 import java.util.List;
 
@@ -36,10 +38,9 @@ public class TimeSlotsAdapter extends
                 @Override
                 public void onClick(View v) {
                     if (timeSlot != null) {
-                        for (DibsRoom room : timeSlot.rooms) {
-                            Log.d("TEST", "Room: " + room.roomID);
-                            Log.d("TEST", "* Description: " + room.description);
-                        }
+                        Intent intent = new Intent(context, RoomsActivity.class);
+                        intent.putExtra(RoomsActivity.TIME_SLOT_KEY, timeSlot);
+                        context.startActivity(intent);
                     }
                 }
             });
@@ -53,9 +54,11 @@ public class TimeSlotsAdapter extends
 
     }
 
+    private final Context context;
     private List<TimeSlot> timeSlots;
 
-    public TimeSlotsAdapter(List<TimeSlot> timeSlots) {
+    public TimeSlotsAdapter(Context context, List<TimeSlot> timeSlots) {
+        this.context = context;
         this.timeSlots = timeSlots;
     }
 

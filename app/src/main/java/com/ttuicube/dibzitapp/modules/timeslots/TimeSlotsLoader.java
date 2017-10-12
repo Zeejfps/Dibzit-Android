@@ -44,7 +44,6 @@ public class TimeSlotsLoader extends AsyncTaskLoader<List<TimeSlot>> {
         List<TimeSlot> timeSlots = createTimeSlots(date, duration);
 
         try {
-            Log.d("TEST", "Fetching rooms...");
             Response<List<DibsRoom>> fetchDibsRoomsResponse = service.fetchDibsRooms().execute();
             if (fetchDibsRoomsResponse.isSuccessful()) {
                 List<DibsRoom> rooms = fetchDibsRoomsResponse.body();

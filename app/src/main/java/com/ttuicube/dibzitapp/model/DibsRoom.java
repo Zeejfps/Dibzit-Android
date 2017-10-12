@@ -1,12 +1,15 @@
 package com.ttuicube.dibzitapp.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by zeejfps on 10/11/2017.
  */
 
-public class DibsRoom {
+public class DibsRoom implements Parcelable {
 
     @SerializedName("RoomID")
     public final int roomID;
@@ -31,4 +34,37 @@ public class DibsRoom {
         this.pictureURL = pictureURL;
     }
 
+    protected DibsRoom(Parcel in) {
+        roomID = in.readInt();
+        name = in.readString();
+        description = in.readString();
+        mapURL = in.readString();
+        pictureURL = in.readString();
+    }
+
+    public static final Creator<DibsRoom> CREATOR = new Creator<DibsRoom>() {
+        @Override
+        public DibsRoom createFromParcel(Parcel in) {
+            return new DibsRoom(in);
+        }
+
+        @Override
+        public DibsRoom[] newArray(int size) {
+            return new DibsRoom[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(roomID);
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeString(mapURL);
+        dest.writeString(pictureURL);
+    }
 }

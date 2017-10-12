@@ -22,10 +22,18 @@
         </activity>
 
         <activity android:name=".modules.timeslots.TimeSlotsActivity"
-            android:label="@string/title_activty_timeslots">
+            android:label="@string/title_activity_timeslots"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".modules.search.SearchActivity" />
+        </activity>
+
+        <activity android:name=".modules.rooms.RoomsActivity"
+            android:label="@string/title_activity_rooms">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".modules.timeslots.TimeSlotsActivity" />
         </activity>
 
     </application>

@@ -4,6 +4,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -40,6 +41,9 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
 
     protected  DibsRestService service;
 
+    private DateTime date;
+    private int duration;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +51,15 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        if (savedInstanceState != null) {
+            date = (DateTime) savedInstanceState.getSerializable(DATE_EXTRA_KEY);
+            duration = savedInstanceState.getInt(DURATION_EXTRA_KEY);
+        }
+        else {
+            date = (DateTime) getIntent().getSerializableExtra(DATE_EXTRA_KEY);
+            duration = getIntent().getIntExtra(DURATION_EXTRA_KEY, 1);
+        }
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(DibsRoomHours.class, new DibsRoomHours.Serializer())
@@ -60,23 +73,34 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        timeSlotsAdapter = new TimeSlotsAdapter(new ArrayList<TimeSlot>());
+        timeSlotsAdapter = new TimeSlotsAdapter(this, new ArrayList<TimeSlot>());
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(timeSlotsAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        getSupportLoaderManager().initLoader(TIME_SLOTS_LOADER_ID, getIntent().getExtras(), this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                layoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        getSupportLoaderManager().initLoader(TIME_SLOTS_LOADER_ID, null, this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(DATE_EXTRA_KEY, date);
+        outState.putInt(DURATION_EXTRA_KEY, duration);
     }
 
     @Override
     public Loader<List<TimeSlot>> onCreateLoader(int id, Bundle args) {
-        DateTime date = (DateTime)args.getSerializable(DATE_EXTRA_KEY);
-        int duration = args.getInt(DURATION_EXTRA_KEY);
         progressBar.setVisibility(View.VISIBLE);
         return new TimeSlotsLoader(this, date, duration, service);
     }
 
     @Override
     public void onLoadFinished(Loader<List<TimeSlot>> loader, List<TimeSlot> data) {
+        Log.d("TEST", "onLoadFinished()");
         timeSlotsAdapter.setData(data);
         progressBar.setVisibility(View.GONE);
     }
