@@ -23,7 +23,9 @@ import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -69,10 +71,17 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
                 .registerTypeAdapter(DibsRoomHours.class, new DibsRoomHours.Serializer())
                 .create();
 
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(API_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(client)
                 .build();
+
         service = retrofit.create(DibsRestService.class);
         repo = new DibsRepository(this, service);
 
