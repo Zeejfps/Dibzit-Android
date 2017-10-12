@@ -1,0 +1,89 @@
+package com.ttuicube.dibzitapp.modules.timeslots;
+
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.ttuicube.dibzitapp.R;
+import com.ttuicube.dibzitapp.model.DibsRoomHours;
+import com.ttuicube.dibzitapp.rest.DibsRestService;
+import com.ttuicube.dibzitapp.model.TimeSlot;
+
+import org.joda.time.DateTime;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class TimeSlotsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<TimeSlot>> {
+
+    public static final String API_URL = "http://tntech.evanced.info/dibsAPI/";
+
+    public static final String DATE_EXTRA_KEY = "Date";
+    public static final String DURATION_EXTRA_KEY = "Duration";
+
+    protected static final int TIME_SLOTS_LOADER_ID = 1;
+
+    protected TimeSlotsAdapter timeSlotsAdapter;
+
+    protected ProgressBar progressBar;
+
+    protected  DibsRestService service;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_time_slots);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(DibsRoomHours.class, new DibsRoomHours.Serializer())
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(API_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        service = retrofit.create(DibsRestService.class);
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        timeSlotsAdapter = new TimeSlotsAdapter(new ArrayList<TimeSlot>());
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.setAdapter(timeSlotsAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        getSupportLoaderManager().initLoader(TIME_SLOTS_LOADER_ID, getIntent().getExtras(), this);
+    }
+
+    @Override
+    public Loader<List<TimeSlot>> onCreateLoader(int id, Bundle args) {
+        DateTime date = (DateTime)args.getSerializable(DATE_EXTRA_KEY);
+        int duration = args.getInt(DURATION_EXTRA_KEY);
+        progressBar.setVisibility(View.VISIBLE);
+        return new TimeSlotsLoader(this, date, duration, service);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<TimeSlot>> loader, List<TimeSlot> data) {
+        timeSlotsAdapter.setData(data);
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<TimeSlot>> loader) {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+}

@@ -1,0 +1,16 @@
+<resources>
+
+    <string name="app_name">Dibzit</string>
+    <string name="title_activty_timeslots">Pick a Time Slot</string>
+
+    <string name="action_search">Search</string>
+
+    <string name="label_date">On:</string>
+    <string name="label_duration">For:</string>
+
+    <array name="duration_array">
+        <item>1 hour</item>
+        <item>2 hours</item>
+    </array>
+
+</resources>
