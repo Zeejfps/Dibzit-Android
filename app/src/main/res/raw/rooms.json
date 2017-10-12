@@ -1,0 +1,106 @@
+[
+  {
+    "BuildingID": 0,
+    "Description": "table, six chairs, white board",
+    "Map": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/Floor_Plan_Rooms_223-228.png",
+    "Name": "group study 223",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/groupstudy223.jpg",
+    "RoomID": 1
+  },
+  {
+    "BuildingID": 0,
+    "Description": "table, six chairs, white board, monitor for laptop hookup (laptops and cords available at Help Desk)",
+    "Map": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/Floor_Plan_Rooms_223-228.png",
+    "Name": "group study 224",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/groupstudy224.jpg",
+    "RoomID": 2
+  },
+  {
+    "BuildingID": 0,
+    "Description": "table, six chairs, white board, monitor for laptop hookup (laptops and cords available at Help Desk)",
+    "Map": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/Floor_Plan_Rooms_223-228.png",
+    "Name": "group study 225",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/groupstudy225.jpg",
+    "RoomID": 3
+  },
+  {
+    "BuildingID": 0,
+    "Description": "table, six chairs, white board, monitor for laptop hookup (laptops and cords available at Help Desk)",
+    "Map": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/Floor_Plan_Rooms_223-228.png",
+    "Name": "group study 226",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/groupstudy226.jpg",
+    "RoomID": 4
+  },
+  {
+    "BuildingID": 0,
+    "Description": "table, six chairs, white board, monitor for laptop hookup (laptops and cords available at Help Desk)",
+    "Map": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/Floor_Plan_Rooms_223-228.png",
+    "Name": "group study 227",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/groupstudy227.jpg",
+    "RoomID": 5
+  },
+  {
+    "BuildingID": 0,
+    "Description": "table, six chairs, white board",
+    "Map": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/Floor_Plan_Rooms_223-228.png",
+    "Name": "group study 228",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/groupstudy228.jpg",
+    "RoomID": 6
+  },
+  {
+    "BuildingID": 0,
+    "Description": "table, six chairs, white board",
+    "Map": "https://erdb.tntech.edu/images/Floor_Plan_Rooms_242-247.png",
+    "Name": "group study 242",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/groupstudy242.jpg",
+    "RoomID": 7
+  },
+  {
+    "BuildingID": 0,
+    "Description": "table, six chairs, white board, monitor for laptop hookup (laptops and cords available at Help Desk)",
+    "Map": "https://erdb.tntech.edu/images/Floor_Plan_Rooms_242-247.png",
+    "Name": "group study 245",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/groupstudy245.jpg",
+    "RoomID": 8
+  },
+  {
+    "BuildingID": 0,
+    "Description": "table, six chairs, white board, monitor for laptop hookup (laptops and cords available at Help Desk)",
+    "Map": "https://erdb.tntech.edu/images/Floor_Plan_Rooms_242-247.png",
+    "Name": "group study 246",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/groupstudy246.jpg",
+    "RoomID": 9
+  },
+  {
+    "BuildingID": 0,
+    "Description": "table, six chairs, white board",
+    "Map": "https://erdb.tntech.edu/images/Floor_Plan_Rooms_242-247.png",
+    "Name": "group study 247",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/groupstudy247.jpg",
+    "RoomID": 10
+  },
+  {
+    "BuildingID": 0,
+    "Description": "table, four chairs, white board, projector, screen, computer, laptop plugin for projection",
+    "Map": "https://erdb.tntech.edu/images/Floor_Plan_Rooms_242-247.png",
+    "Name": "presentation practice 243",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/prespract243.jpg",
+    "RoomID": 11
+  },
+  {
+    "BuildingID": 0,
+    "Description": "table, four chairs, white board, projector, screen, computer, laptop plugin for projection",
+    "Map": "https://erdb.tntech.edu/images/Floor_Plan_Rooms_242-247.png",
+    "Name": "presentation practice 244",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/prespract244.jpg",
+    "RoomID": 12
+  },
+  {
+    "BuildingID": 0,
+    "Description": "sound system, DVD player, VCR, computer, projector with screen, whiteboard, lectern",
+    "Map": "",
+    "Name": "room 110",
+    "Picture": "https://s3.amazonaws.com/static.evanced.info/Customer/TNTech/room110.jpg",
+    "RoomID": 13
+  }
+]

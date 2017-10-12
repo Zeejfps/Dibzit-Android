@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ttuicube.dibzitapp.R;
 import com.ttuicube.dibzitapp.model.DibsRoomHours;
+import com.ttuicube.dibzitapp.repos.DibsRepository;
 import com.ttuicube.dibzitapp.rest.DibsRestService;
 import com.ttuicube.dibzitapp.model.TimeSlot;
 
@@ -39,7 +40,8 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
 
     protected ProgressBar progressBar;
 
-    protected  DibsRestService service;
+    protected DibsRestService service;
+    protected DibsRepository repo;
 
     private DateTime date;
     private int duration;
@@ -72,6 +74,7 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         service = retrofit.create(DibsRestService.class);
+        repo = new DibsRepository(this, service);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -93,7 +96,7 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
     @Override
     public Loader<List<TimeSlot>> onCreateLoader(int id, Bundle args) {
         progressBar.setVisibility(View.VISIBLE);
-        return new TimeSlotsLoader(this, date, duration, service);
+        return new TimeSlotsLoader(this, date, duration, repo);
     }
 
     @Override

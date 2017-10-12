@@ -2,20 +2,16 @@ package com.ttuicube.dibzitapp.modules.timeslots;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
 import com.ttuicube.dibzitapp.model.DibsRoom;
 import com.ttuicube.dibzitapp.model.DibsRoomHours;
-import com.ttuicube.dibzitapp.rest.DibsRestService;
+import com.ttuicube.dibzitapp.repos.DibsRepository;
 import com.ttuicube.dibzitapp.model.TimeSlot;
 
 import org.joda.time.DateTime;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Response;
 
 /**
  * Created by zeejfps on 10/10/2017.
@@ -25,13 +21,13 @@ public class TimeSlotsLoader extends AsyncTaskLoader<List<TimeSlot>> {
 
     protected final DateTime date;
     protected final int duration;
-    protected final DibsRestService service;
+    protected final DibsRepository repo;
 
-    public TimeSlotsLoader(Context context, DateTime date, int duration, DibsRestService service) {
+    public TimeSlotsLoader(Context context, DateTime date, int duration, DibsRepository repo) {
         super(context);
         this.date = date;
         this.duration = duration;
-        this.service = service;
+        this.repo = repo;
     }
 
     @Override
@@ -43,45 +39,16 @@ public class TimeSlotsLoader extends AsyncTaskLoader<List<TimeSlot>> {
     public List<TimeSlot> loadInBackground() {
         List<TimeSlot> timeSlots = createTimeSlots(date, duration);
 
-        try {
-            Response<List<DibsRoom>> fetchDibsRoomsResponse = service.fetchDibsRooms().execute();
-            if (fetchDibsRoomsResponse.isSuccessful()) {
-                List<DibsRoom> rooms = fetchDibsRoomsResponse.body();
-                if (rooms != null) {
-                    for (DibsRoom room : rooms) {
+        List<DibsRoom> rooms = repo.getDibsRooms();
+        for (DibsRoom room : rooms) {
 
-                        boolean error = false;
-
-                        Response<List<DibsRoomHours>> fetchHoursResponse = service
-                                .fetchRoomHours(date.toString("yyyy-MM-dd"), room.roomID).execute();
-                        error = !fetchHoursResponse.isSuccessful();
-
-                        Response<List<DibsRoomHours>> fetchReservationsResponse = service
-                                .fetchReservations(date.toString("yyyy-MM-dd"), room.roomID).execute();
-                        error = error || !fetchReservationsResponse.isSuccessful();
-
-                        if (error) {
-                            // TODO: Handle error
-                            return timeSlots;
-                        }
-
-                        List<DibsRoomHours> openHours = fetchHoursResponse.body();
-                        List<DibsRoomHours> reservations = fetchReservationsResponse.body();
-                        if (openHours != null && reservations != null) {
-                            for (TimeSlot slot : timeSlots) {
-                                if (canBeAdded(slot, openHours, reservations)) {
-                                    slot.rooms.add(room);
-                                }
-                            }
-                        }
-                    }
+            List<DibsRoomHours> openHours = repo.getRoomHours(date, room);
+            List<DibsRoomHours> reservations = repo.getReservations(date, room);
+            for (TimeSlot slot : timeSlots) {
+                if (canBeAdded(slot, openHours, reservations)) {
+                    slot.rooms.add(room);
                 }
-            } else {
-                // TODO: HANDLE ERROR
             }
-        } catch (IOException e) {
-            // TODO: HANDLE ERROR
-            return timeSlots;
         }
 
         List<TimeSlot> notEmptySlots = new ArrayList<>();
