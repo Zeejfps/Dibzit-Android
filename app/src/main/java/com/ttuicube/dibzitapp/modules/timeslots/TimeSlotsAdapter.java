@@ -3,14 +3,12 @@ package com.ttuicube.dibzitapp.modules.timeslots;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ttuicube.dibzitapp.R;
-import com.ttuicube.dibzitapp.model.DibsRoom;
 import com.ttuicube.dibzitapp.model.TimeSlot;
 import com.ttuicube.dibzitapp.modules.rooms.RoomsActivity;
 
@@ -72,7 +70,7 @@ public class TimeSlotsAdapter extends
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View view = inflater.inflate(R.layout.item_time_slot, parent, false);
+        View view = inflater.inflate(R.layout.listitem_timeslot, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }

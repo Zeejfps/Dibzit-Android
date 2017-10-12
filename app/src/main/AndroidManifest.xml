@@ -36,5 +36,12 @@
                 android:value=".modules.timeslots.TimeSlotsActivity" />
         </activity>
 
+        <activity android:name=".modules.login.LoginActivity"
+            android:label="@string/title_activity_login">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".modules.rooms.RoomsActivity" />
+        </activity>
+
     </application>
 </manifest>

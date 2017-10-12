@@ -61,6 +61,8 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
             duration = getIntent().getIntExtra(DURATION_EXTRA_KEY, 1);
         }
 
+        setTitle(date.toString("EE, MMM dd"));
+
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(DibsRoomHours.class, new DibsRoomHours.Serializer())
                 .create();
@@ -76,11 +78,7 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
         timeSlotsAdapter = new TimeSlotsAdapter(this, new ArrayList<TimeSlot>());
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(timeSlotsAdapter);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                layoutManager.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         getSupportLoaderManager().initLoader(TIME_SLOTS_LOADER_ID, null, this);
     }
