@@ -7,6 +7,11 @@
     <string name="title_activity_login">Login</string>
 
     <string name="action_search">Search</string>
+    <string name="action_login">Log in</string>
+    <string name="action_rememberme">Remember Me</string>
+
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
 
     <string name="label_date">On:</string>
     <string name="label_duration">For:</string>

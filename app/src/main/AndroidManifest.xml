@@ -30,14 +30,16 @@
         </activity>
 
         <activity android:name=".modules.rooms.RoomsActivity"
-            android:label="@string/title_activity_rooms">
+            android:label="@string/title_activity_rooms"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".modules.timeslots.TimeSlotsActivity" />
         </activity>
 
         <activity android:name=".modules.login.LoginActivity"
-            android:label="@string/title_activity_login">
+            android:label="@string/title_activity_login"
+            android:launchMode="singleTask">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".modules.rooms.RoomsActivity" />

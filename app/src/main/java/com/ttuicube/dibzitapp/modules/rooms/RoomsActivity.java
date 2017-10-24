@@ -1,6 +1,7 @@
 package com.ttuicube.dibzitapp.modules.rooms;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -11,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import com.ttuicube.dibzitapp.R;
 import com.ttuicube.dibzitapp.model.DibsRoom;
 import com.ttuicube.dibzitapp.model.TimeSlot;
+import com.ttuicube.dibzitapp.modules.login.LoginActivity;
 import com.ttuicube.dibzitapp.modules.timeslots.TimeSlotsAdapter;
 
 import java.util.ArrayList;
@@ -33,7 +35,13 @@ public class RoomsActivity extends AppCompatActivity implements RoomsAdapter.Roo
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        timeSlot = getIntent().getParcelableExtra(TIME_SLOT_KEY);
+        if (savedInstanceState != null) {
+            timeSlot = savedInstanceState.getParcelable(TIME_SLOT_KEY);
+        }
+        else {
+            timeSlot = getIntent().getParcelableExtra(TIME_SLOT_KEY);
+        }
+
         setTitle(timeSlot.startTime.toString("hh:00 aa") + " - " + timeSlot.endTime.toString("hh:00 aa"));
         RoomsAdapter roomsAdapter = new RoomsAdapter(timeSlot.rooms, this);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -42,8 +50,23 @@ public class RoomsActivity extends AppCompatActivity implements RoomsAdapter.Roo
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(TIME_SLOT_KEY, timeSlot);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        timeSlot = savedInstanceState.getParcelable(TIME_SLOT_KEY);
+    }
+
+    @Override
     public void onRoomSelected(DibsRoom room) {
-        new AlertDialog.Builder(this)
+
+        startActivity(new Intent(RoomsActivity.this, LoginActivity.class));
+
+        /*new AlertDialog.Builder(this)
             .setTitle(room.name)
             .setMessage(
                 "\nWhen: " + timeSlot.startTime.toString("EE, MMM dd") +
@@ -62,7 +85,7 @@ public class RoomsActivity extends AppCompatActivity implements RoomsAdapter.Roo
 
                 }
             })
-            .show();
+            .show();*/
     }
 
 }
