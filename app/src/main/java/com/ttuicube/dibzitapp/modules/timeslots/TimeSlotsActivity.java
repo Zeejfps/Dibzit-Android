@@ -31,8 +31,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TimeSlotsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<TimeSlot>> {
 
-    public static final String API_URL = "http://tntech.evanced.info/dibsAPI/";
-
     public static final String DATE_EXTRA_KEY = "Date";
     public static final String DURATION_EXTRA_KEY = "Duration";
 
@@ -42,11 +40,10 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
 
     protected ProgressBar progressBar;
 
-    protected DibsRestService service;
-    protected DibsRepository repo;
-
     private DateTime date;
     private int duration;
+
+    private DibsRepository repo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,23 +64,7 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
 
         setTitle(date.toString("EE, MMM dd"));
 
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(DibsRoomHours.class, new DibsRoomHours.Serializer())
-                .create();
-
-        OkHttpClient client = new OkHttpClient.Builder()
-                .readTimeout(60, TimeUnit.SECONDS)
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(client)
-                .build();
-
-        service = retrofit.create(DibsRestService.class);
-        repo = new DibsRepository(this, service);
+        repo = new DibsRepository(getApplicationContext());
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -95,8 +76,6 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
         getSupportLoaderManager().initLoader(TIME_SLOTS_LOADER_ID, null, this);
     }
 
-
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -107,7 +86,7 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
     @Override
     public Loader<List<TimeSlot>> onCreateLoader(int id, Bundle args) {
         progressBar.setVisibility(View.VISIBLE);
-        return new TimeSlotsLoader(this, date, duration, repo);
+        return new TimeSlotsLoader(getApplicationContext(), date, duration, repo);
     }
 
     @Override

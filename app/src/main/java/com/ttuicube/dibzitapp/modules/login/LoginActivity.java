@@ -38,15 +38,15 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                authenticated(usernameField.getText().toString());
+                onAuthenticated(usernameField.getText().toString());
             }
         });
     }
 
-    private void authenticated(String email) {
+    private void onAuthenticated(String email) {
         if (rememberMe.isChecked()) {
             PreferenceManager.getDefaultSharedPreferences(LoginActivity.this)
-                    .edit().putString(EMAIL_KEY, email).apply();
+                .edit().putString(EMAIL_KEY, email).apply();
         }
         Intent result = new Intent();
         result.putExtra(EMAIL_KEY, email);

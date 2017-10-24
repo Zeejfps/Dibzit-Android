@@ -67,4 +67,9 @@ public class DibsRoom implements Parcelable {
         dest.writeString(mapURL);
         dest.writeString(pictureURL);
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
