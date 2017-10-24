@@ -1,11 +1,10 @@
-package com.ttuicube.dibzitapp.modules.search;
+package com.ttuicube.dibzitapp.screens.search;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -13,7 +12,7 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 
 import com.ttuicube.dibzitapp.R;
-import com.ttuicube.dibzitapp.modules.timeslots.TimeSlotsActivity;
+import com.ttuicube.dibzitapp.screens.timeslots.TimeSlotsActivity;
 
 import org.joda.time.DateTime;
 
@@ -50,7 +49,6 @@ public class SearchActivity extends AppCompatActivity implements DatePickerDialo
                 DatePickerDialog dialog = new DatePickerDialog(SearchActivity.this,
                         SearchActivity.this, date.getYear(), date.getMonthOfYear()-1, date.getDayOfMonth());
                 dialog.getDatePicker().setMinDate(DateTime.now().getMillis());
-                dialog.getDatePicker().setMaxDate(DateTime.now().plusDays(14).getMillis());
                 dialog.show();
             }
         });

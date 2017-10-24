@@ -1,7 +1,7 @@
-package com.ttuicube.dibzitapp.rest;
+package com.ttuicube.dibzitapp.network;
 
-import com.ttuicube.dibzitapp.model.DibsRoom;
-import com.ttuicube.dibzitapp.model.DibsRoomHours;
+import com.ttuicube.dibzitapp.models.DibsRoom;
+import com.ttuicube.dibzitapp.models.DibsRoomHours;
 
 import java.util.List;
 

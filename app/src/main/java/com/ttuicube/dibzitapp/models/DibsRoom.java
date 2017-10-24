@@ -1,4 +1,4 @@
-package com.ttuicube.dibzitapp.model;
+package com.ttuicube.dibzitapp.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -68,8 +68,4 @@ public class DibsRoom implements Parcelable {
         dest.writeString(pictureURL);
     }
 
-    @Override
-    public String toString() {
-        return name;
-    }
 }

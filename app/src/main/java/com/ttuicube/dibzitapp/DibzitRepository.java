@@ -1,17 +1,14 @@
-package com.ttuicube.dibzitapp.repos;
+package com.ttuicube.dibzitapp;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.ttuicube.dibzitapp.R;
-import com.ttuicube.dibzitapp.model.DibsRoom;
-import com.ttuicube.dibzitapp.model.DibsRoomHours;
-import com.ttuicube.dibzitapp.model.TimeSlot;
-import com.ttuicube.dibzitapp.rest.DibsRestService;
+import com.ttuicube.dibzitapp.models.DibsRoom;
+import com.ttuicube.dibzitapp.models.DibsRoomHours;
+import com.ttuicube.dibzitapp.network.DibsRestService;
 
 import org.joda.time.DateTime;
 
@@ -21,12 +18,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -36,7 +35,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Zeejfps on 10/12/17.
  */
 
-public class DibsRepository {
+public class DibzitRepository {
 
     public static final String API_URL = "http://tntech.evanced.info/dibsAPI/";
 
@@ -44,10 +43,9 @@ public class DibsRepository {
     private final DibsRestService service;
 
     private List<DibsRoom> dibsRooms = new ArrayList<>();
-    private List<DibsRoomHours> openHours = new ArrayList<>();
-    private List<DibsRoomHours> reservations = new ArrayList<>();
+    private Map<DateTime, List<DibsRoomHours>> openHours = new HashMap<>();
 
-    public DibsRepository(Context context) {
+    public DibzitRepository(Context context) {
         this.context = context;
 
         Gson gson = new GsonBuilder()
@@ -64,7 +62,6 @@ public class DibsRepository {
 
     public List<DibsRoom> getDibsRooms() {
         if (dibsRooms.isEmpty()) {
-            Log.d("Repo", "rooms are empty...");
             InputStream in = context.getResources().openRawResource(R.raw.rooms);
             Writer writer = new StringWriter();
             char[] buffer = new char[1024];
@@ -83,46 +80,42 @@ public class DibsRepository {
             DibsRoom[] rooms = new Gson().fromJson(json, DibsRoom[].class);
             dibsRooms = Arrays.asList(rooms);
         }
-        for (DibsRoom room : dibsRooms) {
-            Log.d("Repo: ", room.toString());
-        }
         return dibsRooms;
     }
 
     public List<DibsRoomHours> getRoomHours(DateTime date, DibsRoom room) {
-        if (openHours.isEmpty()) {
+        if (!openHours.containsValue(date)) {
             try {
                 Response<List<DibsRoomHours>> fetchHoursResponse = service
                         .fetchRoomHours(date.toString("yyyy-MM-dd"), room.roomID).execute();
                 if (fetchHoursResponse.isSuccessful()) {
                     List<DibsRoomHours> hours = fetchHoursResponse.body();
                     if (hours != null) {
-                        this.openHours = hours;
+                        openHours.put(date, hours);
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return openHours;
+        return openHours.get(date);
     }
 
     public List<DibsRoomHours> getReservations(DateTime date, DibsRoom room) {
-        if (reservations.isEmpty()) {
-            try {
-                Response<List<DibsRoomHours>> fetchReservationsResponse = service
-                        .fetchReservations(date.toString("yyyy-MM-dd"), room.roomID).execute();
-                if (fetchReservationsResponse.isSuccessful()) {
-                    List<DibsRoomHours> reservations = fetchReservationsResponse.body();
-                    if (reservations != null) {
-                        this.reservations = reservations;
-                    }
+        try {
+            Response<List<DibsRoomHours>> fetchReservationsResponse = service
+                    .fetchReservations(date.toString("yyyy-MM-dd"), room.roomID).execute();
+            if (fetchReservationsResponse.isSuccessful()) {
+                List<DibsRoomHours> reservations = fetchReservationsResponse.body();
+                if (reservations != null) {
+                    return reservations;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return reservations;
+
+        return Collections.emptyList();
     }
 
 }

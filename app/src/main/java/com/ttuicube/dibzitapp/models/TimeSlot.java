@@ -1,4 +1,4 @@
-package com.ttuicube.dibzitapp.model;
+package com.ttuicube.dibzitapp.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

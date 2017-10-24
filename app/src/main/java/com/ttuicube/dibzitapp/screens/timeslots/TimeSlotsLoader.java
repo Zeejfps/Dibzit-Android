@@ -1,13 +1,13 @@
-package com.ttuicube.dibzitapp.modules.timeslots;
+package com.ttuicube.dibzitapp.screens.timeslots;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
-import com.ttuicube.dibzitapp.model.DibsRoom;
-import com.ttuicube.dibzitapp.model.DibsRoomHours;
-import com.ttuicube.dibzitapp.repos.DibsRepository;
-import com.ttuicube.dibzitapp.model.TimeSlot;
+import com.ttuicube.dibzitapp.models.DibsRoom;
+import com.ttuicube.dibzitapp.models.DibsRoomHours;
+import com.ttuicube.dibzitapp.DibzitRepository;
+import com.ttuicube.dibzitapp.models.TimeSlot;
 
 import org.joda.time.DateTime;
 
@@ -22,9 +22,9 @@ public class TimeSlotsLoader extends AsyncTaskLoader<List<TimeSlot>> {
 
     protected final DateTime date;
     protected final int duration;
-    protected final DibsRepository repo;
+    protected final DibzitRepository repo;
 
-    public TimeSlotsLoader(Context context, DateTime date, int duration, DibsRepository repo) {
+    public TimeSlotsLoader(Context context, DateTime date, int duration, DibzitRepository repo) {
         super(context);
         this.date = date;
         this.duration = duration;
@@ -45,6 +45,7 @@ public class TimeSlotsLoader extends AsyncTaskLoader<List<TimeSlot>> {
 
             List<DibsRoomHours> openHours = repo.getRoomHours(date, room);
             List<DibsRoomHours> reservations = repo.getReservations(date, room);
+
             for (TimeSlot slot : timeSlots) {
                 if (canBeAdded(slot, openHours, reservations)) {
                     slot.rooms.add(room);
@@ -72,7 +73,7 @@ public class TimeSlotsLoader extends AsyncTaskLoader<List<TimeSlot>> {
         return slots;
     }
 
-    private boolean canBeAdded(TimeSlot slot, List<DibsRoomHours> hours, List<DibsRoomHours> resevations) {
+    private boolean canBeAdded(TimeSlot slot, List<DibsRoomHours> hours, List<DibsRoomHours> reservations) {
         boolean canBeAdded = false;
         for (DibsRoomHours h : hours) {
             if ((h.startTime.isBefore(slot.startTime) || h.startTime.isEqual(slot.startTime))
@@ -80,7 +81,7 @@ public class TimeSlotsLoader extends AsyncTaskLoader<List<TimeSlot>> {
                 canBeAdded = true;
             }
         }
-        for (DibsRoomHours r : resevations) {
+        for (DibsRoomHours r : reservations) {
             if ((r.startTime.isBefore(slot.endTime) || r.startTime.isEqual(slot.endTime))
                     && (r.endTime.isAfter(slot.startTime) || r.endTime.isEqual(slot.startTime))) {
                 canBeAdded = false;

@@ -1,33 +1,24 @@
-package com.ttuicube.dibzitapp.modules.timeslots;
+package com.ttuicube.dibzitapp.screens.timeslots;
 
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.ttuicube.dibzitapp.DibzitApplication;
 import com.ttuicube.dibzitapp.R;
-import com.ttuicube.dibzitapp.model.DibsRoomHours;
-import com.ttuicube.dibzitapp.repos.DibsRepository;
-import com.ttuicube.dibzitapp.rest.DibsRestService;
-import com.ttuicube.dibzitapp.model.TimeSlot;
+import com.ttuicube.dibzitapp.DibzitRepository;
+import com.ttuicube.dibzitapp.models.TimeSlot;
 
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TimeSlotsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<TimeSlot>> {
 
@@ -42,8 +33,6 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
 
     private DateTime date;
     private int duration;
-
-    private DibsRepository repo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +52,6 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
         }
 
         setTitle(date.toString("EE, MMM dd"));
-
-        repo = new DibsRepository(getApplicationContext());
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -86,7 +73,7 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
     @Override
     public Loader<List<TimeSlot>> onCreateLoader(int id, Bundle args) {
         progressBar.setVisibility(View.VISIBLE);
-        return new TimeSlotsLoader(getApplicationContext(), date, duration, repo);
+        return new TimeSlotsLoader(this, date, duration, DibzitApplication.instance().getRepository());
     }
 
     @Override

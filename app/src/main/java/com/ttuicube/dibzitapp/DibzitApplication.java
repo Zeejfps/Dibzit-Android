@@ -10,9 +10,24 @@ import net.danlew.android.joda.JodaTimeAndroid;
 
 public class DibzitApplication extends Application {
 
+    private static DibzitApplication _instance;
+
+    public static DibzitApplication instance() {
+        return _instance;
+    }
+
+    private DibzitRepository repository;
+
     @Override
     public void onCreate() {
         super.onCreate();
         JodaTimeAndroid.init(this);
+        _instance = this;
+        repository = new DibzitRepository(this);
     }
+
+    public DibzitRepository getRepository() {
+        return repository;
+    }
+
 }

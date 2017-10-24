@@ -1,4 +1,4 @@
-package com.ttuicube.dibzitapp.modules.login;
+package com.ttuicube.dibzitapp.screens.login;
 
 import android.content.Intent;
 import android.os.Bundle;

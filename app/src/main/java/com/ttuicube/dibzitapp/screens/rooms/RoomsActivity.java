@@ -1,4 +1,4 @@
-package com.ttuicube.dibzitapp.modules.rooms;
+package com.ttuicube.dibzitapp.screens.rooms;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,12 +14,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 
 import com.ttuicube.dibzitapp.R;
-import com.ttuicube.dibzitapp.model.DibsRoom;
-import com.ttuicube.dibzitapp.model.TimeSlot;
-import com.ttuicube.dibzitapp.modules.login.LoginActivity;
-import com.ttuicube.dibzitapp.modules.timeslots.TimeSlotsAdapter;
-
-import java.util.ArrayList;
+import com.ttuicube.dibzitapp.models.DibsRoom;
+import com.ttuicube.dibzitapp.models.TimeSlot;
+import com.ttuicube.dibzitapp.screens.login.LoginActivity;
 
 /**
  * Created by Zeejfps on 10/11/17.

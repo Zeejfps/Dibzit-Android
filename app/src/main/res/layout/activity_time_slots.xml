@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ttuicube.dibzitapp.modules.timeslots.TimeSlotsActivity">
+    tools:context="com.ttuicube.dibzitapp.screens.timeslots.TimeSlotsActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"

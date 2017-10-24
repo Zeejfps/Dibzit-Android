@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".modules.search.SearchActivity"
+        <activity android:name=".screens.search.SearchActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,28 +21,28 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".modules.timeslots.TimeSlotsActivity"
+        <activity android:name=".screens.timeslots.TimeSlotsActivity"
             android:label="@string/title_activity_timeslots"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".modules.search.SearchActivity" />
+                android:value=".screens.search.SearchActivity" />
         </activity>
 
-        <activity android:name=".modules.rooms.RoomsActivity"
+        <activity android:name=".screens.rooms.RoomsActivity"
             android:label="@string/title_activity_rooms"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".modules.timeslots.TimeSlotsActivity" />
+                android:value=".screens.timeslots.TimeSlotsActivity" />
         </activity>
 
-        <activity android:name=".modules.login.LoginActivity"
+        <activity android:name=".screens.login.LoginActivity"
             android:label="@string/title_activity_login"
             android:launchMode="singleTask">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".modules.rooms.RoomsActivity" />
+                android:value=".screens.rooms.RoomsActivity" />
         </activity>
 
     </application>

@@ -1,4 +1,4 @@
-package com.ttuicube.dibzitapp.rest;
+package com.ttuicube.dibzitapp.network;
 
 import retrofit2.Call;
 import retrofit2.Response;

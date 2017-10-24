@@ -1,4 +1,4 @@
-package com.ttuicube.dibzitapp.modules.timeslots;
+package com.ttuicube.dibzitapp.screens.timeslots;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ttuicube.dibzitapp.R;
-import com.ttuicube.dibzitapp.model.TimeSlot;
-import com.ttuicube.dibzitapp.modules.rooms.RoomsActivity;
+import com.ttuicube.dibzitapp.models.TimeSlot;
+import com.ttuicube.dibzitapp.screens.rooms.RoomsActivity;
 
 import java.util.List;
 

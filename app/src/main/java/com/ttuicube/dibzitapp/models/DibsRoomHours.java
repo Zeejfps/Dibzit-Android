@@ -1,19 +1,14 @@
-package com.ttuicube.dibzitapp.model;
+package com.ttuicube.dibzitapp.models;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.DateTime;
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.util.Date;
 
 /**
  * Created by zeejfps on 10/11/2017.

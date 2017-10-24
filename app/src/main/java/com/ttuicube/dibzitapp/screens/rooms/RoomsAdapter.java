@@ -1,4 +1,4 @@
-package com.ttuicube.dibzitapp.modules.rooms;
+package com.ttuicube.dibzitapp.screens.rooms;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ttuicube.dibzitapp.R;
-import com.ttuicube.dibzitapp.model.DibsRoom;
+import com.ttuicube.dibzitapp.models.DibsRoom;
 
 import java.util.List;
 
