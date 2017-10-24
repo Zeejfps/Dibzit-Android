@@ -95,6 +95,8 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
         getSupportLoaderManager().initLoader(TIME_SLOTS_LOADER_ID, null, this);
     }
 
+
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

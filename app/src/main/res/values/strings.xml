@@ -8,6 +8,7 @@
 
     <string name="action_search">Search</string>
     <string name="action_login">Log in</string>
+    <string name="action_logout">Log out</string>
     <string name="action_rememberme">Remember Me</string>
 
     <string name="hint_username">Username</string>
