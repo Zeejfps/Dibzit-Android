@@ -60,7 +60,7 @@ public class DibzitRepository {
         this.service = retrofit.create(DibsRestService.class);
     }
 
-    public List<DibsRoom> getDibsRooms() {
+    public List<DibsRoom> fetchRooms() {
         if (dibsRooms.isEmpty()) {
             InputStream in = context.getResources().openRawResource(R.raw.rooms);
             Writer writer = new StringWriter();
@@ -83,25 +83,18 @@ public class DibzitRepository {
         return dibsRooms;
     }
 
-    public List<DibsRoomHours> getRoomHours(DateTime date, DibsRoom room) {
-        if (!openHours.containsValue(date)) {
-            try {
-                Response<List<DibsRoomHours>> fetchHoursResponse = service
-                        .fetchRoomHours(date.toString("yyyy-MM-dd"), room.roomID).execute();
-                if (fetchHoursResponse.isSuccessful()) {
-                    List<DibsRoomHours> hours = fetchHoursResponse.body();
-                    if (hours != null) {
-                        openHours.put(date, hours);
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+    public List<DibsRoomHours> fetchWorkingHours(DateTime date, DibsRoom room) {
+        if (!openHours.containsKey(date)) {
+            List<DibsRoomHours> workingHours = fetchWorkingHoursFromDatabase(date, room);
+            if (workingHours.isEmpty()) {
+                workingHours = fetchWorkingHoursFromNetwork(date, room);
             }
+            openHours.put(date, workingHours);
         }
         return openHours.get(date);
     }
 
-    public List<DibsRoomHours> getReservations(DateTime date, DibsRoom room) {
+    public List<DibsRoomHours> fetchReservations(DateTime date, DibsRoom room) {
         try {
             Response<List<DibsRoomHours>> fetchReservationsResponse = service
                     .fetchReservations(date.toString("yyyy-MM-dd"), room.roomID).execute();
@@ -114,7 +107,26 @@ public class DibzitRepository {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return Collections.emptyList();
+    }
 
+    private List<DibsRoomHours> fetchWorkingHoursFromDatabase(DateTime date, DibsRoom room) {
+        return Collections.emptyList();
+    }
+
+    private List<DibsRoomHours> fetchWorkingHoursFromNetwork(DateTime date, DibsRoom room) {
+        try {
+            Response<List<DibsRoomHours>> fetchHoursResponse = service
+                    .fetchRoomHours(date.toString("yyyy-MM-dd"), room.roomID).execute();
+            if (fetchHoursResponse.isSuccessful()) {
+                List<DibsRoomHours> workingHours = fetchHoursResponse.body();
+                if (workingHours != null) {
+                    return workingHours;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return Collections.emptyList();
     }
 

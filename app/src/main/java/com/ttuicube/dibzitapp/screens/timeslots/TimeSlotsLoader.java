@@ -2,7 +2,6 @@ package com.ttuicube.dibzitapp.screens.timeslots;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
 import com.ttuicube.dibzitapp.models.DibsRoom;
 import com.ttuicube.dibzitapp.models.DibsRoomHours;
@@ -40,11 +39,11 @@ public class TimeSlotsLoader extends AsyncTaskLoader<List<TimeSlot>> {
     public List<TimeSlot> loadInBackground() {
         List<TimeSlot> timeSlots = createTimeSlots(date, duration);
 
-        List<DibsRoom> rooms = repo.getDibsRooms();
+        List<DibsRoom> rooms = repo.fetchRooms();
         for (DibsRoom room : rooms) {
 
-            List<DibsRoomHours> openHours = repo.getRoomHours(date, room);
-            List<DibsRoomHours> reservations = repo.getReservations(date, room);
+            List<DibsRoomHours> openHours = repo.fetchWorkingHours(date, room);
+            List<DibsRoomHours> reservations = repo.fetchReservations(date, room);
 
             for (TimeSlot slot : timeSlots) {
                 if (canBeAdded(slot, openHours, reservations)) {
