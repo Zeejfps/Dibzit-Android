@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ttuicube.dibzitapp.R;
@@ -25,7 +26,9 @@ public class RoomsAdapter extends
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public final TextView roomNameView;
+        public final ImageView roomThumbnail;
+        public final TextView roomNameLabel;
+        public final TextView roomDescriptionLabel;
 
         private DibsRoom room;
 
@@ -39,12 +42,15 @@ public class RoomsAdapter extends
                     }
                 }
             });
-            roomNameView = (TextView) itemView.findViewById(R.id.roomNameView);
+            roomThumbnail = (ImageView) itemView.findViewById(R.id.roomThumbnail);
+            roomDescriptionLabel = (TextView) itemView.findViewById(R.id.roomDescriptionLabel);
+            roomNameLabel = (TextView) itemView.findViewById(R.id.roomNameLabel);
         }
 
         public void setDibsRoom(DibsRoom room) {
             this.room = room;
-            roomNameView.setText(room.name);
+            roomNameLabel.setText(room.name.substring(0, 1).toUpperCase() + room.name.substring(1));
+            roomDescriptionLabel.setText(room.description);
         }
 
     }

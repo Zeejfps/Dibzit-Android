@@ -73,7 +73,7 @@ public class TimeSlotsActivity extends AppCompatActivity implements LoaderManage
     @Override
     public Loader<List<TimeSlot>> onCreateLoader(int id, Bundle args) {
         progressBar.setVisibility(View.VISIBLE);
-        return new TimeSlotsLoader(this, date, duration, DibzitApplication.instance().getRepository());
+        return new TimeSlotsLoader(getApplicationContext(), date, duration, DibzitApplication.instance().getRepository());
     }
 
     @Override
