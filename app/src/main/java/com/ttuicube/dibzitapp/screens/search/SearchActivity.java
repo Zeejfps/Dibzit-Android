@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,6 +15,7 @@ import android.widget.Spinner;
 
 import com.ttuicube.dibzitapp.R;
 import com.ttuicube.dibzitapp.screens.timeslots.TimeSlotsActivity;
+import com.ttuicube.dibzitapp.utils.PresenterLoader;
 
 import org.joda.time.DateTime;
 
@@ -20,80 +23,129 @@ import org.joda.time.DateTime;
  * Created by zeejfps on 10/11/2017.
  */
 
-public class SearchActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+public class SearchActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<SearchPresenter>,
+                    SearchView, DatePickerDialog.OnDateSetListener {
 
-    protected Button dateButton;
+    private static final int PRESENTER_ID = 101;
 
-    private int duration;
-    private DateTime date;
+    private Button mSearchButton;
+    private Button mChooseDateButton;
+    private Spinner mDurationSpinner;
+
+    private SearchPresenter mPresenter;
+
+    private DatePickerDialog mDatePickerDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        if (savedInstanceState != null) {
-            duration = savedInstanceState.getInt(TimeSlotsActivity.DURATION_EXTRA_KEY);
-            date = (DateTime)savedInstanceState.getSerializable(TimeSlotsActivity.DATE_EXTRA_KEY);
-        }
-        else {
-            date = DateTime.now();
-            duration = 1;
-        }
+        mSearchButton= (Button) findViewById(R.id.searchButton);
+        mChooseDateButton = (Button) findViewById(R.id.dateButton);
+        mDurationSpinner = (Spinner) findViewById(R.id.durationSpinner);
 
-        dateButton = (Button) findViewById(R.id.dateButton);
-        dateButton.setText(date.toString("EE, MMM dd"));
-        dateButton.setOnClickListener(new View.OnClickListener() {
+        mSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                DatePickerDialog dialog = new DatePickerDialog(SearchActivity.this,
-                        SearchActivity.this, date.getYear(), date.getMonthOfYear()-1, date.getDayOfMonth());
-                dialog.getDatePicker().setMinDate(DateTime.now().getMillis());
-                dialog.show();
+            public void onClick(View view) {
+                mPresenter.doSearchButtonClicked();
             }
         });
 
-        Spinner durationSpinner = (Spinner) findViewById(R.id.durationSpinner);
-        durationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mChooseDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                duration = position + 1;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                duration = 0;
+            public void onClick(View view) {
+                mPresenter.doChooseDateButtonClicked();
             }
         });
 
-        Button button = (Button) findViewById(R.id.searchButton);
-        button.setOnClickListener(new View.OnClickListener() {
+        mDurationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SearchActivity.this, TimeSlotsActivity.class);
-                intent.putExtra(TimeSlotsActivity.DURATION_EXTRA_KEY, duration);
-                intent.putExtra(TimeSlotsActivity.DATE_EXTRA_KEY, date);
-                startActivity(intent);
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                mPresenter.setReservationDuration(position+1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                mPresenter.setReservationDuration(1);
             }
         });
+
+        getSupportLoaderManager().initLoader(PRESENTER_ID, null, this);
     }
 
     @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        DateTime now = DateTime.now();
-        if (now.getYear() == year && now.getMonthOfYear() == month+1 && now.getDayOfMonth() == dayOfMonth) {
-            date = new DateTime(year, month+1, dayOfMonth, now.getHourOfDay(), 0);
-        }
-        else {
-            date = new DateTime(year, month+1, dayOfMonth, 0, 0);
-        }
-        dateButton.setText(date.toString("EE, MMM dd"));
+    protected void onStart() {
+        super.onStart();
+        mPresenter.onViewAttached(this);
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(TimeSlotsActivity.DATE_EXTRA_KEY, date);
-        outState.putInt(TimeSlotsActivity.DURATION_EXTRA_KEY, duration);
+    protected void onStop() {
+        super.onStop();
+        mPresenter.onViewDetached();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mDatePickerDialog != null) {
+            mDatePickerDialog.dismiss();
+        }
+    }
+
+    @Override
+    public Loader<SearchPresenter> onCreateLoader(int id, Bundle args) {
+        return new PresenterLoader<>(getApplicationContext(), new SearchPresenterFactory());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<SearchPresenter> loader, SearchPresenter presenter) {
+        mPresenter = presenter;
+    }
+
+    @Override
+    public void onLoaderReset(Loader loader) {
+        mPresenter = null;
+    }
+
+    @Override
+    public void updateDateTime(DateTime dateTime) {
+        mChooseDateButton.setText(dateTime.toString("EE, MMM dd"));
+    }
+
+    @Override
+    public void updateDuration(int duration) {
+        mDurationSpinner.setSelection(duration - 1);
+    }
+
+    @Override
+    public void showDatepickerDialog(DateTime date) {
+        mDatePickerDialog = new DatePickerDialog(SearchActivity.this,
+                SearchActivity.this, date.getYear(), date.getMonthOfYear()-1, date.getDayOfMonth());
+        mDatePickerDialog.getDatePicker().setMinDate(DateTime.now().getMillis());
+        mDatePickerDialog.show();
+    }
+
+    @Override
+    public void startTimeslotsActivity(int duration, DateTime dateTime) {
+        Intent intent = new Intent(SearchActivity.this, TimeSlotsActivity.class);
+        intent.putExtra(TimeSlotsActivity.DURATION_EXTRA_KEY, duration);
+        intent.putExtra(TimeSlotsActivity.DATE_EXTRA_KEY, dateTime);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        DateTime date = DateTime.now();
+        if (date.getYear() == year && date.getMonthOfYear() == month+1 && date.getDayOfMonth() == day) {
+            date = new DateTime(year, month+1, day, date.getHourOfDay(), 0);
+        }
+        else {
+            date = new DateTime(year, month+1, day, 0, 0);
+        }
+        mPresenter.setReservationDateTime(date);
+    }
+
 }
