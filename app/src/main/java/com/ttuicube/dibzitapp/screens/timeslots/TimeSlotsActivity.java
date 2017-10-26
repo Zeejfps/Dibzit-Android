@@ -3,6 +3,7 @@ package com.ttuicube.dibzitapp.screens.timeslots;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,19 +21,19 @@ import com.ttuicube.dibzitapp.utils.PresenterLoader;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TimeSlotsActivity extends AppCompatActivity
         implements TimeSlotsView, LoaderManager.LoaderCallbacks<TimeSlotsPresenter> {
 
-    public static final String DATE_KEY = "Date";
-    public static final String DURATION_KEY = "Duration";
+    public static final String SLOTS_KEY = "Slots";
 
     private static final int PRESENTER_ID = 101;
 
     private TimeSlotsAdapter timeSlotsAdapter;
 
-    private ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private TimeSlotsPresenter presenter;
 
@@ -43,9 +44,10 @@ public class TimeSlotsActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipreRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(() -> presenter.loadTimeSlots());
 
-        timeSlotsAdapter = new TimeSlotsAdapter(this, new ArrayList<TimeSlot>());
+        timeSlotsAdapter = new TimeSlotsAdapter(this, new ArrayList<>());
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(timeSlotsAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -57,7 +59,11 @@ public class TimeSlotsActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         presenter.onViewAttached(this);
-        this.presenter.loadTimeSlots();
+        ArrayList<TimeSlot> timeSlots = getIntent().getParcelableArrayListExtra(SLOTS_KEY);
+        if (timeSlots != null)
+            timeSlotsAdapter.setData(timeSlots);
+        else
+            presenter.loadTimeSlots();
     }
 
     @Override
@@ -104,6 +110,6 @@ public class TimeSlotsActivity extends AppCompatActivity
 
     @Override
     public void setLoading(boolean loading) {
-        progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        swipeRefreshLayout.setRefreshing(loading);
     }
 }

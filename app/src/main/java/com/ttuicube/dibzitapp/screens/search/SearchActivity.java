@@ -1,6 +1,7 @@
 package com.ttuicube.dibzitapp.screens.search;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,10 +17,14 @@ import android.widget.Spinner;
 
 import com.ttuicube.dibzitapp.DibzitApplication;
 import com.ttuicube.dibzitapp.R;
+import com.ttuicube.dibzitapp.models.TimeSlot;
 import com.ttuicube.dibzitapp.screens.timeslots.TimeSlotsActivity;
 import com.ttuicube.dibzitapp.utils.PresenterLoader;
 
 import org.joda.time.DateTime;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by zeejfps on 10/11/2017.
@@ -27,7 +32,7 @@ import org.joda.time.DateTime;
 
 public class SearchActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<SearchPresenter>,
-                    SearchView, DatePickerDialog.OnDateSetListener {
+                        SearchView, DatePickerDialog.OnDateSetListener {
 
     private static final String TAG = "SearchActivity";
 
@@ -40,6 +45,7 @@ public class SearchActivity extends AppCompatActivity
     private SearchPresenter mPresenter;
 
     private DatePickerDialog mDatePickerDialog;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,9 +89,9 @@ public class SearchActivity extends AppCompatActivity
     protected void onDestroy() {
         Log.d(TAG, "onDestroy()");
         super.onDestroy();
-        if (mDatePickerDialog != null) {
+        if (mDatePickerDialog != null)
             mDatePickerDialog.dismiss();
-        }
+        hideSearchingDialog();
     }
 
     @Override
@@ -115,7 +121,7 @@ public class SearchActivity extends AppCompatActivity
     }
 
     @Override
-    public void showDatepickerDialog(DateTime date) {
+    public void showDatePickerDialog(DateTime date) {
         mDatePickerDialog = new DatePickerDialog(SearchActivity.this,
                 SearchActivity.this, date.getYear(), date.getMonthOfYear()-1, date.getDayOfMonth());
         mDatePickerDialog.getDatePicker().setMinDate(DateTime.now().getMillis());
@@ -123,11 +129,22 @@ public class SearchActivity extends AppCompatActivity
     }
 
     @Override
-    public void startTimeslotsActivity(int duration, DateTime dateTime) {
+    public void startTimeSlotsActivity(List<TimeSlot> timeSlots) {
         Intent intent = new Intent(SearchActivity.this, TimeSlotsActivity.class);
-        intent.putExtra(TimeSlotsActivity.DURATION_KEY, duration);
-        intent.putExtra(TimeSlotsActivity.DATE_KEY, dateTime);
+        intent.putParcelableArrayListExtra(TimeSlotsActivity.SLOTS_KEY, (ArrayList)timeSlots);
         startActivity(intent);
+    }
+
+    @Override
+    public void displaySearchingDialog() {
+        mProgressDialog = ProgressDialog.show(this, "", "Searching...");
+    }
+
+    @Override
+    public void hideSearchingDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
     }
 
     @Override

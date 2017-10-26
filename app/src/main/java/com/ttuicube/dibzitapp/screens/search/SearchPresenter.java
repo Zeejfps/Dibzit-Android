@@ -13,6 +13,7 @@ public class SearchPresenter implements Presenter<SearchView> {
 
     private SearchView mView;
     private final Repository repo;
+    private boolean searching;
 
     public SearchPresenter(Repository repo) {
         this.repo = repo;
@@ -23,14 +24,27 @@ public class SearchPresenter implements Presenter<SearchView> {
         mView = view;
         mView.updateDateTime(repo.getSearchDateTime());
         mView.updateDuration(repo.getReservationDuration());
+        if (searching) {
+            mView.displaySearchingDialog();
+        }
+        else {
+            mView.hideSearchingDialog();
+        }
     }
 
     public void doSearchButtonClicked() {
-        mView.startTimeslotsActivity(repo.getReservationDuration(), repo.getSearchDateTime());
+        searching = true;
+        mView.displaySearchingDialog();
+        repo.fetchTimeSlots(repo.getSearchDateTime(), repo.getReservationDuration(), timeSlots -> {
+            searching = false;
+            if (mView != null) {
+                mView.startTimeSlotsActivity(timeSlots);
+            }
+        });
     }
 
     public void doChooseDateButtonClicked() {
-        mView.showDatepickerDialog(repo.getSearchDateTime());
+        mView.showDatePickerDialog(repo.getSearchDateTime());
     }
 
     public void setReservationDuration(int duration) {
