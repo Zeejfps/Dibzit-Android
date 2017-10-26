@@ -1,16 +1,19 @@
-package com.ttuicube.dibzitapp;
+package com.ttuicube.dibzitapp.repos;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ttuicube.dibzitapp.R;
 import com.ttuicube.dibzitapp.database.DibzitDbHelper;
 import com.ttuicube.dibzitapp.models.DibsRoom;
 import com.ttuicube.dibzitapp.models.DibsRoomHours;
+import com.ttuicube.dibzitapp.models.TimeSlot;
 import com.ttuicube.dibzitapp.network.DibsRestService;
 
 import org.joda.time.DateTime;
@@ -39,7 +42,7 @@ import static com.ttuicube.dibzitapp.database.DibzitContract.WorkingHoursEntry;
  * Created by Zeejfps on 10/12/17.
  */
 
-public class DibzitRepository {
+public class DibzitRepository implements Repository {
 
     public static final String API_URL = "http://tntech.evanced.info/dibsAPI/";
 
@@ -47,6 +50,8 @@ public class DibzitRepository {
     private final DibsRestService service;
     private final DibzitDbHelper dbHelper;
 
+    private int reservationDuration;
+    private DateTime searchDateTime;
     private List<DibsRoom> dibsRooms = new ArrayList<>();
     private Map<DateTime, List<DibsRoomHours>> openHours = new HashMap<>();
 
@@ -64,9 +69,63 @@ public class DibzitRepository {
 
         this.service = retrofit.create(DibsRestService.class);
         this.dbHelper = new DibzitDbHelper(context);
+
+        searchDateTime = DateTime.now();
+        reservationDuration = 1;
     }
 
-    public List<DibsRoom> fetchRooms() {
+    @Override
+    public void fetchTimeSlots(DateTime date, int duration, Callback callback) {
+        new Thread(() -> {
+            List<TimeSlot> timeSlots = createTimeSlots(date, duration);
+
+            List<DibsRoom> rooms = fetchRooms();
+            for (DibsRoom room : rooms) {
+
+                List<DibsRoomHours> openHours = fetchWorkingHours(date, room);
+                List<DibsRoomHours> reservations = fetchReservations(date, room);
+
+                for (TimeSlot slot : timeSlots) {
+                    if (canBeAdded(slot, openHours, reservations)) {
+                        slot.rooms.add(room);
+                    }
+                }
+            }
+
+            List<TimeSlot> notEmptySlots = new ArrayList<>();
+            for (TimeSlot slot : timeSlots) {
+                if (slot.rooms.size() > 0) {
+                    notEmptySlots.add(slot);
+                }
+            }
+
+            new Handler(context.getMainLooper()).post(() -> {
+                callback.onSuccess(notEmptySlots);
+            });
+        }).start();
+    }
+
+    @Override
+    public void setSearchDateTime(DateTime dateTime) {
+        this.searchDateTime = dateTime;
+    }
+
+    @Override
+    public DateTime getSearchDateTime() {
+        return searchDateTime;
+    }
+
+    @Override
+    public void setReservationDuration(int duration) {
+        this.reservationDuration = duration;
+    }
+
+    @Override
+    public int getReservationDuration() {
+        return reservationDuration;
+    }
+
+    private List<DibsRoom> fetchRooms() {
         if (dibsRooms.isEmpty()) {
             InputStream in = context.getResources().openRawResource(R.raw.rooms);
             Writer writer = new StringWriter();
@@ -89,7 +148,7 @@ public class DibzitRepository {
         return dibsRooms;
     }
 
-    public List<DibsRoomHours> fetchWorkingHours(DateTime date, DibsRoom room) {
+    private List<DibsRoomHours> fetchWorkingHours(DateTime date, DibsRoom room) {
         if (!openHours.containsKey(date)) {
             List<DibsRoomHours> workingHours = fetchWorkingHoursFromDatabase(date, room);
             if (workingHours.isEmpty()) {
@@ -101,7 +160,7 @@ public class DibzitRepository {
         return openHours.get(date);
     }
 
-    public List<DibsRoomHours> fetchReservations(DateTime date, DibsRoom room) {
+    private List<DibsRoomHours> fetchReservations(DateTime date, DibsRoom room) {
         try {
             Response<List<DibsRoomHours>> fetchReservationsResponse = service
                     .fetchReservations(date.toString("yyyy-MM-dd"), room.roomID).execute();
@@ -179,6 +238,34 @@ public class DibzitRepository {
             db.insert(WorkingHoursEntry.TABLE_NAME, null, values);
         }
         db.close();
+    }
+
+    private List<TimeSlot> createTimeSlots(DateTime date, int duration) {
+        List<TimeSlot> slots = new ArrayList<>();
+        DateTime startTime = date;
+        for (int i = startTime.getHourOfDay(); i < 24; i++) {
+            DateTime endTime = startTime.plusHours(duration);
+            slots.add(new TimeSlot(startTime, endTime));
+            startTime = startTime.plusHours(1);
+        }
+        return slots;
+    }
+
+    private boolean canBeAdded(TimeSlot slot, List<DibsRoomHours> hours, List<DibsRoomHours> reservations) {
+        boolean canBeAdded = false;
+        for (DibsRoomHours h : hours) {
+            if ((h.getStartTime().isBefore(slot.startTime) || h.getStartTime().isEqual(slot.startTime))
+                    && (h.getEndTime().isAfter(slot.endTime) || h.getEndTime().isEqual(slot.endTime))) {
+                canBeAdded = true;
+            }
+        }
+        for (DibsRoomHours r : reservations) {
+            if ((r.getStartTime().isBefore(slot.endTime) || r.getStartTime().isEqual(slot.endTime))
+                    && (r.getEndTime().isAfter(slot.startTime) || r.getEndTime().isEqual(slot.startTime))) {
+                canBeAdded = false;
+            }
+        }
+        return canBeAdded;
     }
 
 }

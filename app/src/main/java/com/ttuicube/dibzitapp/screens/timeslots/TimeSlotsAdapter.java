@@ -32,14 +32,11 @@ public class TimeSlotsAdapter extends
             super(itemView);
             timeTextView = (TextView) itemView.findViewById(R.id.timeTextView);
             roomCountTextView = (TextView) itemView.findViewById(R.id.roomCountTextView);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (timeSlot != null) {
-                        Intent intent = new Intent(context, RoomsActivity.class);
-                        intent.putExtra(RoomsActivity.TIME_SLOT_KEY, timeSlot);
-                        context.startActivity(intent);
-                    }
+            itemView.setOnClickListener(v -> {
+                if (timeSlot != null) {
+                    Intent intent = new Intent(context, RoomsActivity.class);
+                    intent.putExtra(RoomsActivity.TIME_SLOT_KEY, timeSlot);
+                    context.startActivity(intent);
                 }
             });
         }

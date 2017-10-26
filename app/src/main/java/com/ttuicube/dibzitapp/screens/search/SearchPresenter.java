@@ -1,5 +1,6 @@
 package com.ttuicube.dibzitapp.screens.search;
 
+import com.ttuicube.dibzitapp.repos.Repository;
 import com.ttuicube.dibzitapp.utils.Presenter;
 
 import org.joda.time.DateTime;
@@ -10,39 +11,36 @@ import org.joda.time.DateTime;
 
 public class SearchPresenter implements Presenter<SearchView> {
 
-    private int mReservationDuration;
-    private DateTime mReservationDateTime;
-
     private SearchView mView;
+    private final Repository repo;
 
-    public SearchPresenter() {
-        mReservationDuration = 1;
-        mReservationDateTime = DateTime.now();
+    public SearchPresenter(Repository repo) {
+        this.repo = repo;
     }
 
     @Override
     public void onViewAttached(SearchView view) {
         mView = view;
-        mView.updateDateTime(mReservationDateTime);
-        mView.updateDuration(mReservationDuration);
+        mView.updateDateTime(repo.getSearchDateTime());
+        mView.updateDuration(repo.getReservationDuration());
     }
 
     public void doSearchButtonClicked() {
-        mView.startTimeslotsActivity(mReservationDuration, mReservationDateTime);
+        mView.startTimeslotsActivity(repo.getReservationDuration(), repo.getSearchDateTime());
     }
 
     public void doChooseDateButtonClicked() {
-        mView.showDatepickerDialog(mReservationDateTime);
+        mView.showDatepickerDialog(repo.getSearchDateTime());
     }
 
     public void setReservationDuration(int duration) {
-        this.mReservationDuration = duration;
-        mView.updateDuration(mReservationDuration);
+        repo.setReservationDuration(duration);
+        mView.updateDuration(repo.getReservationDuration());
     }
 
     public void setReservationDateTime(DateTime dateTime) {
-        this.mReservationDateTime = dateTime;
-        mView.updateDateTime(mReservationDateTime);
+        repo.setSearchDateTime(dateTime);
+        mView.updateDateTime(repo.getSearchDateTime());
     }
 
     @Override
@@ -51,8 +49,6 @@ public class SearchPresenter implements Presenter<SearchView> {
     }
 
     @Override
-    public void onDestroyed() {
-
-    }
+    public void onDestroyed() {}
 
 }

@@ -7,12 +7,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 
+import com.ttuicube.dibzitapp.DibzitApplication;
 import com.ttuicube.dibzitapp.R;
 import com.ttuicube.dibzitapp.screens.timeslots.TimeSlotsActivity;
 import com.ttuicube.dibzitapp.utils.PresenterLoader;
@@ -26,6 +28,8 @@ import org.joda.time.DateTime;
 public class SearchActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<SearchPresenter>,
                     SearchView, DatePickerDialog.OnDateSetListener {
+
+    private static final String TAG = "SearchActivity";
 
     private static final int PRESENTER_ID = 101;
 
@@ -46,20 +50,8 @@ public class SearchActivity extends AppCompatActivity
         mChooseDateButton = (Button) findViewById(R.id.dateButton);
         mDurationSpinner = (Spinner) findViewById(R.id.durationSpinner);
 
-        mSearchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPresenter.doSearchButtonClicked();
-            }
-        });
-
-        mChooseDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPresenter.doChooseDateButtonClicked();
-            }
-        });
-
+        mSearchButton.setOnClickListener(view -> mPresenter.doSearchButtonClicked());
+        mChooseDateButton.setOnClickListener(view -> mPresenter.doChooseDateButtonClicked());
         mDurationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
@@ -89,6 +81,7 @@ public class SearchActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy()");
         super.onDestroy();
         if (mDatePickerDialog != null) {
             mDatePickerDialog.dismiss();
@@ -97,7 +90,8 @@ public class SearchActivity extends AppCompatActivity
 
     @Override
     public Loader<SearchPresenter> onCreateLoader(int id, Bundle args) {
-        return new PresenterLoader<>(getApplicationContext(), new SearchPresenterFactory());
+        return new PresenterLoader<>(getApplicationContext(),
+                new SearchPresenterFactory(DibzitApplication.instance().getRepository()));
     }
 
     @Override
@@ -131,8 +125,8 @@ public class SearchActivity extends AppCompatActivity
     @Override
     public void startTimeslotsActivity(int duration, DateTime dateTime) {
         Intent intent = new Intent(SearchActivity.this, TimeSlotsActivity.class);
-        intent.putExtra(TimeSlotsActivity.DURATION_EXTRA_KEY, duration);
-        intent.putExtra(TimeSlotsActivity.DATE_EXTRA_KEY, dateTime);
+        intent.putExtra(TimeSlotsActivity.DURATION_KEY, duration);
+        intent.putExtra(TimeSlotsActivity.DATE_KEY, dateTime);
         startActivity(intent);
     }
 

@@ -2,6 +2,8 @@ package com.ttuicube.dibzitapp;
 
 import android.app.Application;
 
+import com.ttuicube.dibzitapp.repos.DibzitRepository;
+
 import net.danlew.android.joda.JodaTimeAndroid;
 
 /**

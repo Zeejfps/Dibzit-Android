@@ -21,8 +21,8 @@
         </activity>
 
         <activity android:name=".screens.timeslots.TimeSlotsActivity"
-            android:label="@string/title_activity_timeslots"
-            android:launchMode="singleTop">
+            android:parentActivityName=".screens.search.SearchActivity"
+            android:label="@string/title_activity_timeslots">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".screens.search.SearchActivity" />

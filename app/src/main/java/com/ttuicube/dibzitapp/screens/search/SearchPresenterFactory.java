@@ -1,5 +1,6 @@
 package com.ttuicube.dibzitapp.screens.search;
 
+import com.ttuicube.dibzitapp.repos.Repository;
 import com.ttuicube.dibzitapp.utils.PresenterFactory;
 
 /**
@@ -7,8 +8,15 @@ import com.ttuicube.dibzitapp.utils.PresenterFactory;
  */
 
 public class SearchPresenterFactory implements PresenterFactory<SearchPresenter> {
+
+    private final Repository repo;
+
+    public SearchPresenterFactory(Repository repo) {
+        this.repo = repo;
+    }
+
     @Override
     public SearchPresenter create() {
-        return new SearchPresenter();
+        return new SearchPresenter(repo);
     }
 }
