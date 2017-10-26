@@ -75,14 +75,14 @@ public class TimeSlotsLoader extends AsyncTaskLoader<List<TimeSlot>> {
     private boolean canBeAdded(TimeSlot slot, List<DibsRoomHours> hours, List<DibsRoomHours> reservations) {
         boolean canBeAdded = false;
         for (DibsRoomHours h : hours) {
-            if ((h.startTime.isBefore(slot.startTime) || h.startTime.isEqual(slot.startTime))
-                    && (h.endTime.isAfter(slot.endTime) || h.endTime.isEqual(slot.endTime))) {
+            if ((h.getStartTime().isBefore(slot.startTime) || h.getStartTime().isEqual(slot.startTime))
+                    && (h.getEndTime().isAfter(slot.endTime) || h.getEndTime().isEqual(slot.endTime))) {
                 canBeAdded = true;
             }
         }
         for (DibsRoomHours r : reservations) {
-            if ((r.startTime.isBefore(slot.endTime) || r.startTime.isEqual(slot.endTime))
-                    && (r.endTime.isAfter(slot.startTime) || r.endTime.isEqual(slot.startTime))) {
+            if ((r.getStartTime().isBefore(slot.endTime) || r.getStartTime().isEqual(slot.endTime))
+                    && (r.getEndTime().isAfter(slot.startTime) || r.getEndTime().isEqual(slot.startTime))) {
                 canBeAdded = false;
             }
         }

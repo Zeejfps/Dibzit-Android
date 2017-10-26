@@ -16,13 +16,37 @@ import java.lang.reflect.Type;
 
 public class DibsRoomHours {
 
-    public final int roomID;
-    public final DateTime startTime;
-    public final DateTime endTime;
+    private int roomID;
+    private DateTime startTime;
+    private DateTime endTime;
 
     public DibsRoomHours(int roomID, DateTime startTime, DateTime endTime) {
         this.roomID = roomID;
         this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public void setRoomID(int roomID) {
+        this.roomID = roomID;
+    }
+
+    public int getRoomID() {
+        return roomID;
+    }
+
+    public DateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(DateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public DateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(DateTime endTime) {
         this.endTime = endTime;
     }
 

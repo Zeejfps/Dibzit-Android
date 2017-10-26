@@ -1,11 +1,15 @@
 package com.ttuicube.dibzitapp;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ttuicube.dibzitapp.R;
+import com.ttuicube.dibzitapp.database.DibzitContract;
+import com.ttuicube.dibzitapp.database.DibzitDbHelper;
 import com.ttuicube.dibzitapp.models.DibsRoom;
 import com.ttuicube.dibzitapp.models.DibsRoomHours;
 import com.ttuicube.dibzitapp.network.DibsRestService;
@@ -21,7 +25,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +33,8 @@ import java.util.Map;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.ttuicube.dibzitapp.database.DibzitContract.*;
 
 /**
  * Created by Zeejfps on 10/12/17.
@@ -41,6 +46,7 @@ public class DibzitRepository {
 
     private final Context context;
     private final DibsRestService service;
+    private final DibzitDbHelper dbHelper;
 
     private List<DibsRoom> dibsRooms = new ArrayList<>();
     private Map<DateTime, List<DibsRoomHours>> openHours = new HashMap<>();
@@ -58,6 +64,7 @@ public class DibzitRepository {
                 .build();
 
         this.service = retrofit.create(DibsRestService.class);
+        this.dbHelper = new DibzitDbHelper(context);
     }
 
     public List<DibsRoom> fetchRooms() {
@@ -85,11 +92,17 @@ public class DibzitRepository {
 
     public List<DibsRoomHours> fetchWorkingHours(DateTime date, DibsRoom room) {
         if (!openHours.containsKey(date)) {
-            List<DibsRoomHours> workingHours = fetchWorkingHoursFromDatabase(date, room);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            List<DibsRoomHours> workingHours = fetchWorkingHoursFromDatabase(db, date, room);
             if (workingHours.isEmpty()) {
+                Log.d("TEST", "No items in found in DB");
                 workingHours = fetchWorkingHoursFromNetwork(date, room);
+                saveWorkingHoursToDatabase(db, date, room, workingHours);
+            } else {
+                Log.d("TEST", "Found stuff in DB!");
             }
             openHours.put(date, workingHours);
+            db.close();
         }
         return openHours.get(date);
     }
@@ -110,8 +123,35 @@ public class DibzitRepository {
         return Collections.emptyList();
     }
 
-    private List<DibsRoomHours> fetchWorkingHoursFromDatabase(DateTime date, DibsRoom room) {
-        return Collections.emptyList();
+    private List<DibsRoomHours> fetchWorkingHoursFromDatabase(SQLiteDatabase db, DateTime date, DibsRoom room) {
+        String[] projection = {
+            WorkingHoursEntry.COLUMN_ROOM_ID,
+            WorkingHoursEntry.COLUMN_START_TIME,
+            WorkingHoursEntry.COLUMN_END_TIME
+        };
+
+        String selection = WorkingHoursEntry.COLUMN_ROOM_ID + " = ? AND "
+            + WorkingHoursEntry.COLUMN_DATE + " = ?";
+
+        String[] args = {
+            Integer.toString(room.roomID),
+            date.toString("yyyy-MM-dd")
+        };
+
+        Cursor cursor = db.query(WorkingHoursEntry.TABLE_NAME,
+                projection, selection, args, null, null, null);
+
+        List<DibsRoomHours> workingHours = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            int roomID = cursor.getInt(cursor.getColumnIndex(WorkingHoursEntry.COLUMN_ROOM_ID));
+            String startTimeStr = cursor.getString(cursor.getColumnIndex(WorkingHoursEntry.COLUMN_START_TIME));
+            String endTimeStr = cursor.getString(cursor.getColumnIndex(WorkingHoursEntry.COLUMN_END_TIME));
+            DateTime startTime = DateTime.parse(startTimeStr);
+            DateTime endTime = DateTime.parse(endTimeStr);
+            workingHours.add(new DibsRoomHours(roomID, startTime, endTime));
+        }
+
+        return workingHours;
     }
 
     private List<DibsRoomHours> fetchWorkingHoursFromNetwork(DateTime date, DibsRoom room) {
@@ -128,6 +168,20 @@ public class DibzitRepository {
             e.printStackTrace();
         }
         return Collections.emptyList();
+    }
+
+    private void saveWorkingHoursToDatabase(SQLiteDatabase db, DateTime date, DibsRoom room, List<DibsRoomHours> workingHours) {
+
+        for (DibsRoomHours hours : workingHours) {
+            ContentValues values = new ContentValues();
+            values.put(WorkingHoursEntry.COLUMN_DATE, date.toString("yyyy-MM-dd"));
+            values.put(WorkingHoursEntry.COLUMN_ROOM_ID, room.roomID);
+            values.put(WorkingHoursEntry.COLUMN_START_TIME, hours.getStartTime().toString());
+            values.put(WorkingHoursEntry.COLUMN_END_TIME, hours.getEndTime().toString());
+
+            db.insert(WorkingHoursEntry.TABLE_NAME, null, values);
+        }
+
     }
 
 }
