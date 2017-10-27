@@ -1,13 +1,8 @@
 package com.ttuicube.dibzitapp.screens.timeslots;
 
-import com.ttuicube.dibzitapp.repos.DibzitRepository;
-import com.ttuicube.dibzitapp.models.DibsRoom;
-import com.ttuicube.dibzitapp.models.DibsRoomHours;
 import com.ttuicube.dibzitapp.models.TimeSlot;
 import com.ttuicube.dibzitapp.repos.Repository;
 import com.ttuicube.dibzitapp.utils.Presenter;
-
-import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +25,7 @@ public class TimeSlotsPresenter implements Presenter<TimeSlotsView> {
     @Override
     public void onViewAttached(TimeSlotsView view) {
         this.view = view;
-        notifyView();
+        view.updateTitle(repo.getSearchDateTime().toString("EEE, MMM dd"));
     }
 
     @Override
@@ -41,18 +36,23 @@ public class TimeSlotsPresenter implements Presenter<TimeSlotsView> {
     @Override
     public void onDestroyed() {}
 
+    public void setTimeSlots(List<TimeSlot> timeSlots) {
+        this.timeSlots = timeSlots;
+        notifyView();
+    }
+
     public void loadTimeSlots() {
         view.setLoading(true);
         repo.fetchTimeSlots(repo.getSearchDateTime(), repo.getReservationDuration(), timeSlots -> {
            this.timeSlots = timeSlots;
            if (view != null) {
-               notifyView();
-               view.setLoading(false);
+               setTimeSlots(timeSlots);
            }
        });
     }
 
     private void notifyView() {
+        view.setLoading(false);
         if (this.timeSlots.isEmpty())
             view.displayNoSlots();
         else

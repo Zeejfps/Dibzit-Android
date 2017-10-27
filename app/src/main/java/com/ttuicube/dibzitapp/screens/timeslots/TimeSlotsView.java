@@ -9,7 +9,12 @@ import java.util.List;
  */
 
 public interface TimeSlotsView {
+
     void displayNoSlots();
+
     void displayTimeSlots(List<TimeSlot> timeSlots);
+
     void setLoading(boolean loading);
+
+    void updateTitle(String s);
 }

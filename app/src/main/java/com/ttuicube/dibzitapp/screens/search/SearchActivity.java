@@ -87,7 +87,6 @@ public class SearchActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy()");
         super.onDestroy();
         if (mDatePickerDialog != null)
             mDatePickerDialog.dismiss();

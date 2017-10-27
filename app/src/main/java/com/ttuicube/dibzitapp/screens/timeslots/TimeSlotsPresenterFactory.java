@@ -15,7 +15,6 @@ public class TimeSlotsPresenterFactory implements PresenterFactory<TimeSlotsPres
         this.repo = repo;
     }
 
-
     @Override
     public TimeSlotsPresenter create() {
         return new TimeSlotsPresenter(repo);

@@ -14,6 +14,7 @@
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
 
+    <string name="label_no_rooms">Sorry no rooms available.</string>
     <string name="label_date">On:</string>
     <string name="label_duration">For:</string>
 

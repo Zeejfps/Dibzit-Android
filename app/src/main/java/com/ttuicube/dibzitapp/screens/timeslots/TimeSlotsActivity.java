@@ -11,17 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ttuicube.dibzitapp.DibzitApplication;
 import com.ttuicube.dibzitapp.R;
 import com.ttuicube.dibzitapp.models.TimeSlot;
 import com.ttuicube.dibzitapp.utils.PresenterLoader;
 
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class TimeSlotsActivity extends AppCompatActivity
@@ -33,7 +31,9 @@ public class TimeSlotsActivity extends AppCompatActivity
 
     private TimeSlotsAdapter timeSlotsAdapter;
 
+    private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView noRoomsLabel;
 
     private TimeSlotsPresenter presenter;
 
@@ -44,11 +44,13 @@ public class TimeSlotsActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        noRoomsLabel = (TextView) findViewById(R.id.noRoomsLabel);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipreRefreshLayout);
+
         swipeRefreshLayout.setOnRefreshListener(() -> presenter.loadTimeSlots());
 
         timeSlotsAdapter = new TimeSlotsAdapter(this, new ArrayList<>());
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(timeSlotsAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -61,7 +63,7 @@ public class TimeSlotsActivity extends AppCompatActivity
         presenter.onViewAttached(this);
         ArrayList<TimeSlot> timeSlots = getIntent().getParcelableArrayListExtra(SLOTS_KEY);
         if (timeSlots != null)
-            timeSlotsAdapter.setData(timeSlots);
+            presenter.setTimeSlots(timeSlots);
         else
             presenter.loadTimeSlots();
     }
@@ -100,16 +102,25 @@ public class TimeSlotsActivity extends AppCompatActivity
 
     @Override
     public void displayNoSlots() {
-
+        timeSlotsAdapter.setData(Collections.emptyList());
+        recyclerView.setVisibility(View.GONE);
+        noRoomsLabel.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void displayTimeSlots(List<TimeSlot> timeSlots) {
         timeSlotsAdapter.setData(timeSlots);
+        recyclerView.setVisibility(View.VISIBLE);
+        noRoomsLabel.setVisibility(View.GONE);
     }
 
     @Override
     public void setLoading(boolean loading) {
         swipeRefreshLayout.setRefreshing(loading);
+    }
+
+    @Override
+    public void updateTitle(String s) {
+        setTitle(s);
     }
 }
