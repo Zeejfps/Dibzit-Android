@@ -23,6 +23,7 @@
     <array name="duration_array">
         <item>1 hour</item>
         <item>2 hours</item>
+        <item>3 hours</item>
     </array>
 
 </resources>
