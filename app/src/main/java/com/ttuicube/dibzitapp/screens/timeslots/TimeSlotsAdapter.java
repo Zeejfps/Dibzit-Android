@@ -21,6 +21,10 @@ import java.util.List;
 public class TimeSlotsAdapter extends
         RecyclerView.Adapter<TimeSlotsAdapter.ViewHolder> {
 
+    public interface TimeSlotSelectedCallback {
+        void onTimeSlotSelected(TimeSlot timeSlot);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView timeTextView;
@@ -34,9 +38,7 @@ public class TimeSlotsAdapter extends
             roomCountTextView = (TextView) itemView.findViewById(R.id.roomCountTextView);
             itemView.setOnClickListener(v -> {
                 if (timeSlot != null) {
-                    Intent intent = new Intent(context, RoomsActivity.class);
-                    intent.putExtra(RoomsActivity.TIME_SLOT_KEY, timeSlot);
-                    context.startActivity(intent);
+                    callback.onTimeSlotSelected(timeSlot);
                 }
             });
         }
@@ -51,10 +53,12 @@ public class TimeSlotsAdapter extends
 
     private final Context context;
     private List<TimeSlot> timeSlots;
+    private TimeSlotSelectedCallback callback;
 
-    public TimeSlotsAdapter(Context context, List<TimeSlot> timeSlots) {
+    public TimeSlotsAdapter(Context context, List<TimeSlot> timeSlots, TimeSlotSelectedCallback callback) {
         this.context = context;
         this.timeSlots = timeSlots;
+        this.callback = callback;
     }
 
     public void setData(List<TimeSlot> timeSlots) {

@@ -54,6 +54,8 @@ public class DibzitRepository implements Repository {
     private DateTime searchDateTime;
     private List<DibsRoom> dibsRooms = new ArrayList<>();
     private Map<DateTime, List<DibsRoomHours>> openHours = new HashMap<>();
+    private String email;
+    private TimeSlot selectedTimeSlot;
 
     public DibzitRepository(Context context) {
         this.context = context;
@@ -72,6 +74,7 @@ public class DibzitRepository implements Repository {
 
         searchDateTime = DateTime.now();
         reservationDuration = 1;
+        email = "";
     }
 
     @Override
@@ -123,6 +126,26 @@ public class DibzitRepository implements Repository {
     @Override
     public int getReservationDuration() {
         return reservationDuration;
+    }
+
+    @Override
+    public void setUserEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String getUserEmail() {
+        return email;
+    }
+
+    @Override
+    public void setSelectedTimeSlot(TimeSlot timeSlot) {
+        selectedTimeSlot = timeSlot;
+    }
+
+    @Override
+    public TimeSlot getSelectedTimeSlot() {
+        return selectedTimeSlot;
     }
 
     private List<DibsRoom> fetchRooms() {

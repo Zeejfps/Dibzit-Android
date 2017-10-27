@@ -29,14 +29,15 @@
         </activity>
 
         <activity android:name=".screens.rooms.RoomsActivity"
-            android:label="@string/title_activity_rooms"
-            android:launchMode="singleTop">
+            android:parentActivityName=".screens.search.SearchActivity"
+            android:label="@string/title_activity_rooms">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".screens.timeslots.TimeSlotsActivity" />
         </activity>
 
         <activity android:name=".screens.login.LoginActivity"
+            android:parentActivityName=".screens.search.SearchActivity"
             android:label="@string/title_activity_login"
             android:launchMode="singleTask">
             <meta-data

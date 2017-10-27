@@ -1,5 +1,6 @@
 package com.ttuicube.dibzitapp.screens.timeslots;
 
+import android.content.Intent;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.ttuicube.dibzitapp.DibzitApplication;
 import com.ttuicube.dibzitapp.R;
 import com.ttuicube.dibzitapp.models.TimeSlot;
+import com.ttuicube.dibzitapp.screens.rooms.RoomsActivity;
 import com.ttuicube.dibzitapp.utils.PresenterLoader;
 
 import java.util.ArrayList;
@@ -50,7 +52,9 @@ public class TimeSlotsActivity extends AppCompatActivity
 
         swipeRefreshLayout.setOnRefreshListener(() -> presenter.loadTimeSlots());
 
-        timeSlotsAdapter = new TimeSlotsAdapter(this, new ArrayList<>());
+        timeSlotsAdapter = new TimeSlotsAdapter(this, new ArrayList<>(), timeSlot -> {
+            presenter.onTimeSlotSelected(timeSlot);
+        });
         recyclerView.setAdapter(timeSlotsAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -122,5 +126,10 @@ public class TimeSlotsActivity extends AppCompatActivity
     @Override
     public void updateTitle(String s) {
         setTitle(s);
+    }
+
+    @Override
+    public void startRoomsActivity() {
+        startActivity(new Intent(this, RoomsActivity.class));
     }
 }

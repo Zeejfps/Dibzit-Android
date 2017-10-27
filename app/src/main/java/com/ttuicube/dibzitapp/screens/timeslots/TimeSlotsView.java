@@ -17,4 +17,6 @@ public interface TimeSlotsView {
     void setLoading(boolean loading);
 
     void updateTitle(String s);
+
+    void startRoomsActivity();
 }

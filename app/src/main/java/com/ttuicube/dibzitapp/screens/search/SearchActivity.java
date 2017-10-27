@@ -95,7 +95,7 @@ public class SearchActivity extends AppCompatActivity
 
     @Override
     public Loader<SearchPresenter> onCreateLoader(int id, Bundle args) {
-        return new PresenterLoader<>(getApplicationContext(),
+        return new PresenterLoader<>(this,
                 new SearchPresenterFactory(DibzitApplication.instance().getRepository()));
     }
 

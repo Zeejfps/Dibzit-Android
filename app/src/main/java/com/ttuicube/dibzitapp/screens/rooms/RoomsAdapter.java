@@ -83,4 +83,9 @@ public class RoomsAdapter extends
         return rooms.size();
     }
 
+    public void setData(List<DibsRoom> rooms) {
+        this.rooms = rooms;
+        notifyDataSetChanged();
+    }
+
 }

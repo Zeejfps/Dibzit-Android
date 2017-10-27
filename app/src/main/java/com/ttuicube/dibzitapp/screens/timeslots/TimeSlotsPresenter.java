@@ -59,4 +59,9 @@ public class TimeSlotsPresenter implements Presenter<TimeSlotsView> {
             view.displayTimeSlots(this.timeSlots);
     }
 
+    public void onTimeSlotSelected(TimeSlot timeSlot) {
+        repo.setSelectedTimeSlot(timeSlot);
+        view.startRoomsActivity();
+    }
+
 }

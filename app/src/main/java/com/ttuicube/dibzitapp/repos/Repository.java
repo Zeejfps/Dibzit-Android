@@ -25,4 +25,12 @@ public interface Repository {
     void setReservationDuration(int duration);
 
     int getReservationDuration();
+
+    void setUserEmail(String email);
+
+    String getUserEmail();
+
+    void setSelectedTimeSlot(TimeSlot timeSlot);
+
+    TimeSlot getSelectedTimeSlot();
 }
