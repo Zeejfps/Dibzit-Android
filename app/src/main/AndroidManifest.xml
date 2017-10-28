@@ -38,8 +38,7 @@
 
         <activity android:name=".screens.login.LoginActivity"
             android:parentActivityName=".screens.search.SearchActivity"
-            android:label="@string/title_activity_login"
-            android:launchMode="singleTask">
+            android:label="@string/title_activity_login">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".screens.rooms.RoomsActivity" />

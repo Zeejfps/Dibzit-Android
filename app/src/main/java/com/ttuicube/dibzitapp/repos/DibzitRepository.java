@@ -45,6 +45,7 @@ import static com.ttuicube.dibzitapp.database.DibzitContract.WorkingHoursEntry;
 public class DibzitRepository implements Repository {
 
     public static final String API_URL = "http://tntech.evanced.info/dibsAPI/";
+    public static final String EMAIL_KEY = "Email";
 
     private final Context context;
     private final DibsRestService service;
